@@ -3,6 +3,19 @@
            https://api.github.com/users/<your name>
 */
 
+const cards = document.querySelector(".cards");
+
+axios
+  .get("https://api.github.com/users/bwkarr77")
+  .then(results => {
+    console.log("response", results.data);
+    const card = createComponent(results.data);
+    cards.append(card);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -46,10 +59,55 @@ const followersArray = [];
 
 */
 
-/* List of LS Instructors Github username's: 
-  tetondan
-  dustinmyers
-  justsml
-  luishrd
-  bigknell
-*/
+function createComponent(gitUser) {
+  const card = document.createElement("div");
+  const img = document.createElement("img");
+  const cardInfo = document.createElement("div");
+  const name = document.createElement("h3");
+  const username = document.createElement("p");
+  const location = document.createElement("p");
+  const profile = document.createElement("p");
+  const link = document.createElement("a");
+  const followers = document.createElement("p");
+  const following = document.createElement("p");
+  const bio = document.createElement("p");
+
+  card.append(img, cardInfo);
+  cardInfo.append(name, username, location, profile, followers, following, bio);
+  profile.append(link);
+  //appendChild is a DOM, and won't allow a list of inputs like i've done
+  //append is a js function, and allows multiple inputs in one line.
+  //all cases where you use appendChild you can use append, but not all append cases can use appendChild.
+
+  card.classList.add("card");
+  cardInfo.classList.add("card-info");
+  name.classList.add("name");
+  username.classList.add("username");
+
+  img.src = gitUser.avatar_url;
+  name.textContent = gitUser.name;
+  username.textContent = gitUser.login;
+  location.textContent = `Location: ${gitUser.location}`;
+  profile.textContent = "Profile: ";
+  link.href = gitUser.html_url;
+  link.textContent = gitUser.html_url;
+  followers.textContent = `Followers: ${gitUser.followers}`;
+  following.textContent = `Following: ${gitUser.following}`;
+  bio.textContent = `Bio: ${gitUser.bio}`;
+  return card;
+}
+
+/* List of LS Instructors Github username's: */
+const followers = ["tetondan", "dustinmyers", "justsml", "luishrd", "bigknell"];
+
+followers.forEach(follower => {
+  axios
+    .get(`https://api.github.com/users/${follower}`)
+    .then(result => {
+      const card = createComponent(result.data);
+      cards.append(card);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
