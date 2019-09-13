@@ -4,9 +4,10 @@
 */
 
 const cards = document.querySelector(".cards");
+const itsMe = "bwkarr77";
 
 axios
-  .get("https://api.github.com/users/bwkarr77")
+  .get(`https://api.github.com/users/${itsMe}`)
   .then(results => {
     console.log("response", results.data);
     const card = createComponent(results.data);
@@ -66,9 +67,7 @@ function createComponent(gitUser) {
   const name = document.createElement("h3");
   const username = document.createElement("p");
   const location = document.createElement("p");
-  // const profileContent = document.createElement(`div`);
   const profile = document.createElement("p");
-  const link = document.createElement("a");
   const followers = document.createElement("p");
   const following = document.createElement("p");
   const bio = document.createElement("p");
@@ -121,17 +120,49 @@ lsInstructors.forEach(follower => {
 });
 
 //STRETCH GOALS//
-// axios
-//   .get(`https://api.github.com/users/${lsInstructors[1]}/followers`)
-//   .then(result => {
-//     console.log("response", result.data);
-//     result.data.forEach(i => {
-//       axios.get(`https://api.github.com/users/${login[i]}`).then(result2 => {
-//         const card = createComponent(result2.data);
-//         cards.append(card);
-//       });
-//     });
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });
+axios
+  .get(`https://api.github.com/users/${lsInstructors[1]}/followers`) //pulls in list of followers from array
+  .then(result1 => {
+    // console.log(result1.data);
+    result1.data.forEach(i => {
+      //forEach 'follower', do the following:
+      axios
+        .get(`https://api.github.com/users/${i.login}`)
+        //pulls in each user 'login'
+        .then(result2 => {
+          // console.log(i.login);
+          const card = createComponent(result2.data); //creates a new card for each user 'login'
+          cards.append(card);
+        });
+    });
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+//Github Contributions
+// function gitContributions(input) {
+//   const gitCal = document.createElement("div");
+//   const script1 = document.createElement("script");
+//   const link1 = document.createElement("a");
+//   const calendar = document.createElement("div");
+//   const script2 = document.createElement("script");
+
+//   gitCal.append(script1, link1, calendar, script2);
+
+//   gitCal.classList.add("gitContainer");
+//   calendar.classList.add("calendar");
+
+//   scrip1.src =
+//     "https://cdn.rawgit.com/IonicaBizau/github-calendar/gh-pages/dist/github-calendar.min.js";
+//   link1.href =
+//     "https://cdn.rawgit.com/IonicaBizau/github-calendar/gh-pages/dist/github-calendar.css";
+//   username.textContent = gitUser.login;
+//   location.textContent = `Location: ${gitUser.location}`;
+//   profile.innerHTML = `Profile: <a href="${gitUser.html_url}">${gitUser.html_url}</a>`;
+//   followers.textContent = `Followers: ${gitUser.followers}`;
+//   following.textContent = `Following: ${gitUser.following}`;
+//   bio.textContent = `Bio: ${gitUser.bio}`;
+
+//   return gitCal;
+// }
