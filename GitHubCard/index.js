@@ -66,6 +66,7 @@ function createComponent(gitUser) {
   const name = document.createElement("h3");
   const username = document.createElement("p");
   const location = document.createElement("p");
+  // const profileContent = document.createElement(`div`);
   const profile = document.createElement("p");
   const link = document.createElement("a");
   const followers = document.createElement("p");
@@ -74,7 +75,7 @@ function createComponent(gitUser) {
 
   card.append(img, cardInfo);
   cardInfo.append(name, username, location, profile, followers, following, bio);
-  profile.append(link);
+  // profileContent.append(profile, link);
   //appendChild is a DOM, and won't allow a list of inputs like i've done
   //append is a js function, and allows multiple inputs in one line.
   //all cases where you use appendChild you can use append, but not all append cases can use appendChild.
@@ -88,9 +89,7 @@ function createComponent(gitUser) {
   name.textContent = gitUser.name;
   username.textContent = gitUser.login;
   location.textContent = `Location: ${gitUser.location}`;
-  profile.textContent = "Profile: ";
-  link.href = gitUser.html_url;
-  link.textContent = gitUser.html_url;
+  profile.innerHTML = `Profile: <a href="${gitUser.html_url}">${gitUser.html_url}</a>`;
   followers.textContent = `Followers: ${gitUser.followers}`;
   following.textContent = `Following: ${gitUser.following}`;
   bio.textContent = `Bio: ${gitUser.bio}`;
@@ -98,16 +97,41 @@ function createComponent(gitUser) {
 }
 
 /* List of LS Instructors Github username's: */
-const followers = ["tetondan", "dustinmyers", "justsml", "luishrd", "bigknell"];
+const lsInstructors = [
+  "tetondan",
+  "dustinmyers",
+  "justsml",
+  "luishrd",
+  "bigknell"
+];
 
-followers.forEach(follower => {
+lsInstructors.forEach(follower => {
   axios
     .get(`https://api.github.com/users/${follower}`)
     .then(result => {
       const card = createComponent(result.data);
       cards.append(card);
     })
+    // .then(result =>{
+    //   const friendList =
+    // })
     .catch(err => {
       console.log(err);
     });
 });
+
+//STRETCH GOALS//
+// axios
+//   .get(`https://api.github.com/users/${lsInstructors[1]}/followers`)
+//   .then(result => {
+//     console.log("response", result.data);
+//     result.data.forEach(i => {
+//       axios.get(`https://api.github.com/users/${login[i]}`).then(result2 => {
+//         const card = createComponent(result2.data);
+//         cards.append(card);
+//       });
+//     });
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
