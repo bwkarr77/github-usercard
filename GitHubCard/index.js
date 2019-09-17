@@ -71,9 +71,14 @@ function createComponent(gitUser) {
   const followers = document.createElement("p");
   const following = document.createElement("p");
   const bio = document.createElement("p");
+  const topSection = document.createElement("div");
+  const bottomSection = document.createElement("div");
+  const contribution = document.createElement("img");
 
-  card.append(img, cardInfo);
+  card.append(topSection, bottomSection);
+  topSection.append(img, cardInfo);
   cardInfo.append(name, username, location, profile, followers, following, bio);
+  bottomSection.append(contribution);
   // profileContent.append(profile, link);
   //appendChild is a DOM, and won't allow a list of inputs like i've done
   //append is a js function, and allows multiple inputs in one line.
@@ -83,6 +88,9 @@ function createComponent(gitUser) {
   cardInfo.classList.add("card-info");
   name.classList.add("name");
   username.classList.add("username");
+  topSection.classList.add("topSection");
+  bottomSection.classList.add("bottomSection");
+  contribution.classList.add("gitCont");
 
   img.src = gitUser.avatar_url;
   name.textContent = gitUser.name;
@@ -92,6 +100,25 @@ function createComponent(gitUser) {
   followers.textContent = `Followers: ${gitUser.followers}`;
   following.textContent = `Following: ${gitUser.following}`;
   bio.textContent = `Bio: ${gitUser.bio}`;
+
+  //extra shite------
+  card.style.flexDirection = "column";
+  topSection.style.display = "flex";
+  topSection.style.padding = "10px 5px";
+  bottomSection.style.padding = "10px 5px";
+  contribution.src = `http://ghchart.rshah.org/${gitUser.login}`;
+  contribution.style.width = "100%";
+  // contribution.style.display = "none";
+
+  //button
+  more = document.createElement("p");
+  card.append(more);
+  more.textContent = "more";
+  more.addEventListener("click", e => {
+    card.classList.toggle("card-open");
+    contribution.classList.toggle("gitCont-open");
+  });
+
   return card;
 }
 
@@ -104,9 +131,9 @@ const lsInstructors = [
   "bigknell"
 ];
 
-lsInstructors.forEach(follower => {
+lsInstructors.forEach(instructor => {
   axios
-    .get(`https://api.github.com/users/${follower}`)
+    .get(`https://api.github.com/users/${instructor}`)
     .then(result => {
       const card = createComponent(result.data);
       cards.append(card);
@@ -120,10 +147,12 @@ lsInstructors.forEach(follower => {
 });
 
 //STRETCH GOALS//
+//Create card for each person in friends list//
+//----Used an instructor's list because they had more----//
 axios
   .get(`https://api.github.com/users/${lsInstructors[1]}/followers`) //pulls in list of followers from array
   .then(result1 => {
-    // console.log(result1.data);
+    console.log("friendlist", result1.data);
     result1.data.forEach(i => {
       //forEach 'follower', do the following:
       axios
